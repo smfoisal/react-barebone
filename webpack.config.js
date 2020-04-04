@@ -1,6 +1,18 @@
+const path = require("path");
+const webpack = require("webpack");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+  entry: "./src/app",
+  resolve: {
+    alias: {
+      app: path.resolve(__dirname, "src/app/"),
+      components: path.resolve(__dirname, "src/components/"),
+      style: path.resolve(__dirname, "src/style/"),
+      config: path.resolve(__dirname, "src/config/"),
+      assets: path.resolve(__dirname, "src/assets/")
+    }
+  },
   module: {
     rules: [
       {
@@ -19,7 +31,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
+        test: /\.(scss|css)/,
         use: [
           {
             loader: "style-loader"
@@ -40,8 +52,11 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
+      template: "./src/app/index.html",
       filename: "./index.html"
-    })
+    }),
+    // We don't want to write new compiled files if those would include errors
+    // This way, the dev app doesn't break if there's an error in compiling.
+    new webpack.NoEmitOnErrorsPlugin()
   ]
 };
